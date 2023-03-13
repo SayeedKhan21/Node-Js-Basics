@@ -4,15 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1" ,
-    "start": "node src/index.js" ,
-    "dev" : "nodemon src/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.18.2",
-    "mongoose": "^7.0.1"
+    "mongoose": "^7.0.1",
+    "validator": "^13.9.0"
   }
 }
