@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{!-- <script src="/js/app.js"></script> --}}
+    <title>Weather app</title>
+</head>
+
+<div class="main-content">
+    <h1>{{title}}</h1>
+    <h1>{{body}}</h1>
+
+    <form>
+        <input name="input" type="text">
+        <button>Search</button>
+    </form>
+
+    <div class="weather-content">
+    </div>
+</div>
+
+<script>
+    const form = document.querySelector('form')
+    
+    const btn = document.getElementsByTagName('button')[0]
+
+    btn.addEventListener('click' , (e) =>{
+        e.preventDefault()
+        getWeatherData(form.input.value)
+    })
+
+    const getWeatherData =  (address) => {fetch(`http://localhost:3000/weather?address=${address}`)
+        .then(res => res.json())
+        .then((data) => {
+            if(data.error){
+                console.error(data.error)
+            }
+            else {
+            }
+        })
+    }
+</script>
+
+</body>
+
+</html>
