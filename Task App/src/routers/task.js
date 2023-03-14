@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const Task = require('../models/task')
+const auth = require('../middlewares/auth')
 
-
-router.get('/tasks' , async (req ,res) => {
+router.get('/tasks' ,  async (req ,res) => {
     try { 
         const allTasks = await Task.find({})
         return res.send(allTasks)
@@ -13,25 +13,28 @@ router.get('/tasks' , async (req ,res) => {
     }
 })
 
-router.get('/tasks/:id' , async (req ,res) => {
-    const id = req.params.id
+router.get('/tasks/me' , auth , async (req ,res) => {
 
     try { 
-        const task = await Taks.findById(id)
-        if(!task){
+        const tasks = await Task.find({user : req.user._id})
+        if(!tasks){
             return res.status(404).send({'msg' : 'task not found'})
         }
-        res.send(task)
+
+        res.send(tasks)
     }
     catch(e){
         res.status(500).send(e)
     }
    
 })
-router.post('/tasks' , async (req ,res) => {
+router.post('/tasks' ,auth , async (req ,res) => {
     const newTask = new Task(req.body)
     try {
+        newTask.user = req.user._id  
         await newTask.save()
+        await newTask.populate('user')
+        console.log(newTask.user)
         res.status(201).send(newTask)
     }
     catch(e){
@@ -64,7 +67,7 @@ router.patch('/tasks/:id' , async (req , res) => {
 
 
 
-router.delete('/tasks/:id' , async (req ,res) => {
+router.delete('/tasks/me' , async (req ,res) => {
     try{
         const task = await Task.findByIdAndDelete(req.params.id)
 

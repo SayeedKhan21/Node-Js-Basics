@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const validator = require('validator')
+const jwt = require('jsonwebtoken')
 const Schema = mongoose.Schema
 
 
@@ -43,9 +44,37 @@ const UserSchema = new Schema(
                         throw new Error('Password must be atleast of 3 characters')
                 }
             }
-        }
+        } ,
+        tokens : [{
+            token : {
+                type :String , 
+                required : true 
+            }
+        }]
     }
 )
+
+
+
+UserSchema.methods.toJSON = function(){
+    const user = this
+    // console.log(user)
+    const userObject = user.toObject()
+    // console.log(1)
+    // console.log("userObject = " , userObject)
+
+    delete userObject.password
+    delete userObject.tokens
+    return userObject
+}
+
+UserSchema.methods.generateAuthToken = async function(){
+    const user = this 
+    const token = jwt.sign({_id : user._id.toString()} , 'random')
+    user.tokens = user.tokens.concat({token})
+    await user.save()
+    return token 
+}
 
 UserSchema.statics.findByCredentials = async (email , pass) => {
     const user = await User.findOne({email})
@@ -63,12 +92,9 @@ UserSchema.statics.findByCredentials = async (email , pass) => {
 
 UserSchema.pre('save' , async function(next){
     const user = this
-    // console.log("outside")
     if(user.isModified('password')){
-        // console.log("inside")
         user.password = await bcrypt.hash(user.password , 8)
     }
-    // console.log(user)
     next()
 })
 
