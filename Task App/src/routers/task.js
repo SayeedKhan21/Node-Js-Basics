@@ -16,7 +16,21 @@ router.get('/tasks' ,  async (req ,res) => {
 router.get('/tasks/me' , auth , async (req ,res) => {
 
     try { 
-        const tasks = await Task.find({user : req.user._id})
+        // console.log(1)
+        const filter  = {user : req.user._id ,}
+        if(req.query.completed){
+            filter.completed  = ( req.query.completed == 'true')
+        }
+  
+        let limit = 10
+        let skip =0 
+        if(req.query.limit){
+             limit = parseInt(req.query.limit)            
+        }
+        if(req.query.skip){
+             skip = parseInt(req.query.skip)            
+        }
+        const tasks = await Task.find(filter).skip(skip).limit(limit)
         if(!tasks){
             return res.status(404).send({'msg' : 'task not found'})
         }
