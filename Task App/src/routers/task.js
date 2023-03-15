@@ -34,7 +34,7 @@ router.post('/tasks' ,auth , async (req ,res) => {
         newTask.user = req.user._id  
         await newTask.save()
         await newTask.populate('user')
-        console.log(newTask.user)
+        // console.log(newTask.user)
         res.status(201).send(newTask)
     }
     catch(e){
@@ -42,7 +42,7 @@ router.post('/tasks' ,auth , async (req ,res) => {
     }
 })
 
-router.patch('/tasks/:id' , async (req , res) => {
+router.patch('/tasks/:id' ,auth , async (req , res) => {
     try{
 
         const allowedUpdates = ['description' , 'completed']
@@ -54,10 +54,16 @@ router.patch('/tasks/:id' , async (req , res) => {
             return res.status(400).send({'msg' : 'Invalid property'})
         }
 
-        const task = await Task.findByIdAndUpdate(req.params.id , req.body ,  {new : true , runValidators : true})
+        const task = await Task.findOne({_id : req.params.id , user : req.user._id})
         if(!task){
-            res.status(404).send('Task not Found')
+            return res.status(404).send('Cannot update this task')
         }
+
+        updatesGiven.forEach((update) => {
+            task[update] = req.body[update]
+        })
+        await task.save()
+
         res.status(200).send(task)     
     }
     catch(e){
@@ -67,12 +73,12 @@ router.patch('/tasks/:id' , async (req , res) => {
 
 
 
-router.delete('/tasks/me' , async (req ,res) => {
+router.delete('/tasks/:id' , auth , async (req ,res) => {
     try{
-        const task = await Task.findByIdAndDelete(req.params.id)
-
+        const task = await Task.findOneAndDelete({_id : req.params.id , user: req.user._id})
+        
         if(!task){
-            res.status(404).send({'msg' : 'task not found'})
+            return res.status(400).send({'msg' : 'Unable to delete'})
         }
 
         res.send({"msg" : 'Deleted'})

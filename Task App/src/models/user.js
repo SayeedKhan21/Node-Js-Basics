@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const validator = require('validator')
 const jwt = require('jsonwebtoken')
+const Task = require('./task')
 const Schema = mongoose.Schema
 
 
@@ -97,6 +98,9 @@ UserSchema.pre('save' , async function(next){
     }
     next()
 })
+
+
+
 
 const User = mongoose.model('User' , UserSchema)
 

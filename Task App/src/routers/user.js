@@ -1,6 +1,6 @@
-const bcrypt = require('bcryptjs/dist/bcrypt')
 const express = require('express')
 const User = require('../models/user')
+const Task = require('../models/task')
 const auth =  require('../middlewares/auth')
 const router = express.Router()
 
@@ -50,11 +50,13 @@ router.patch('/users/me' ,auth  , async (req , res) => {
 })
 
 
-router.delete('/users/me' , auth  , async (req ,res) => {
+router.delete('/users/me/' , auth  , async (req ,res) => {
     try{
-
-        await req.user.remove()
-        res.send(req.user)
+        await Task.deleteMany({user : req.user._id})
+        // console.log(1)
+        await User.deleteOne({_id : req.user._id})
+        req.user = {}
+        res.send("Deleted")
     }
     catch(e){
         res.send(e)

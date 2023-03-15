@@ -1,7 +1,7 @@
 const express = require('express')
 const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
-
+const User = require('./models/user')
 require('./db/mongoose')
 
 
@@ -23,6 +23,6 @@ app.use(taskRouter)
 // }
 // myfunc()
 
-app.listen(3000 , ()=> {
+app.listen(3000 , async ()=> {
     console.log(`Server is running on port ${port}`)
 })
