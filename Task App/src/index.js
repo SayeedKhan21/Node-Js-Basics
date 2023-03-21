@@ -1,28 +1,8 @@
-const express = require('express')
-const userRouter = require('./routers/user')
-const taskRouter = require('./routers/task')
-const User = require('./models/user')
-require('./db/mongoose')
+const app = require('./app')
 
+const port = process.env.PORT 
 
-const app = express()
-const port  = process.env.PORT || 3000
-
-
-app.use(express.json())
-
-
-
-app.use(userRouter)
-app.use(taskRouter)
-
-// const myfunc =  async () => {
-//     const mypass = 'sk1234'
-//     const password = await bcrypt.hash(mypass ,8)
-//     console.log(password)
-// }
-// myfunc()
-
-app.listen(3000 , async ()=> {
+app.listen(port , async ()=> {
     console.log(`Server is running on port ${port}`)
+
 })
